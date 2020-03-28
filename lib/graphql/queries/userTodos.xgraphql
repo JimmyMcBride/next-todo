@@ -1,0 +1,8 @@
+query UserTodos($userId: String!) {
+  userTodos(userId: $userId) {
+    id
+    name
+    description
+    username
+  }
+}

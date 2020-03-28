@@ -1,0 +1,45 @@
+type User {
+  id: ID!
+  username: String!
+  todos: [Todo]!
+}
+
+type Todo {
+  id: ID!
+  name: String!
+  description: String!
+  createdAt: String!
+}
+
+input AddTodoInput {
+  name: String!
+  description: String!
+  userId: Int!
+}
+
+input AuthInput {
+  username: String!
+  password: String!
+}
+
+# type RegisterResponse {
+#   message: String
+#   user: User
+# }
+
+type LoginResponse {
+  token: String
+}
+
+type Query {
+  users: [User]!
+  user(id: ID!): User
+  todos: [Todo]!
+  # userTodos(userId: String!): [Todo]!
+}
+
+type Mutation {
+  addTodo(data: AddTodoInput!): Todo
+  register(data: AuthInput!): User
+  login(data: AuthInput!): LoginResponse!
+}

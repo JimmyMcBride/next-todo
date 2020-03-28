@@ -1,0 +1,7 @@
+mutation AddTodo($data: AddTodoInput!) {
+  addTodo(data: $data) {
+    id
+    name
+    description
+  }
+}
