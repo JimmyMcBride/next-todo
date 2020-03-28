@@ -6,7 +6,7 @@ export const Query: Required<QueryResolvers> = {
   async users() {
     return db("users");
   },
-  async user(_: any, { id }: QueryUserArgs): Promise<any> {
+  async user(_: any, { id }: QueryUserArgs) {
     return await db("users")
       .where({ id })
       .first();

@@ -6,7 +6,15 @@ import {
   // @ts-ignore
   User,
   // @ts-ignore
+  Todo,
+  // @ts-ignore
   MutationAuthArgs,
+  // @ts-ignore
+  MutationEditTodoArgs,
+  // @ts-ignore
+  MutationDeleteTodoArgs,
+  // @ts-ignore
+  gibberish,
 } from "*.graphqls";
 import db from "../../data/config";
 import jwt from "jsonwebtoken";
@@ -38,7 +46,7 @@ export const Mutation: Required<MutationResolvers> = {
       await db("todos").insert(data);
       const { name } = data;
       console.log(name);
-      const todo = await db("todos")
+      const todo: Todo = await db("todos")
         .where({ name })
         .first();
       console.log(todo);
@@ -46,19 +54,46 @@ export const Mutation: Required<MutationResolvers> = {
     }
   },
   async register(_: any, { data }: MutationAuthArgs) {
-    const { username } = data;
-    return await db("users")
+    const { username, password } = data;
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    const user: User = {
+      username,
+      password: hashedPassword,
+    };
+    await db("users").insert(user);
+    return db("users")
       .where({ username })
       .first();
   },
-  async login(user: User, { data }: MutationAuthArgs) {
+  async login(_: any, { data }: MutationAuthArgs): Promise<any> {
     const { username, password } = data;
-    const userResponse = await db("users")
+    const user = await db("users")
       .where({ username })
       .first();
-    if (userResponse && bcrypt.compareSync(password, user.password)) {
+    if (bcrypt.compareSync(password, user?.password)) {
       const token = genToken(user);
-      return token;
+      console.log(token);
+      return { token };
     }
+  },
+  async editTodo(_: any, { data }: MutationEditTodoArgs) {
+    const { id, name, description } = data;
+    const args = { name, description };
+    await db("todos")
+      .where({ id })
+      .update(args);
+    return await db("todos")
+      .where({ id })
+      .first();
+  },
+  async deleteTodo(_: any, { data }: MutationDeleteTodoArgs) {
+    const { id, name, description } = data;
+    const args = { name, description };
+    await db("todos")
+      .where({ id })
+      .update(args);
+    return await db("todos")
+      .where({ id })
+      .first();
   },
 };
