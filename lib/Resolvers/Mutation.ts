@@ -86,14 +86,11 @@ export const Mutation: Required<MutationResolvers> = {
       .where({ id })
       .first();
   },
-  async deleteTodo(_: any, { data }: MutationDeleteTodoArgs) {
-    const { id, name, description } = data;
-    const args = { name, description };
+  async deleteTodo(_: any, { id }: MutationDeleteTodoArgs) {
     await db("todos")
       .where({ id })
-      .update(args);
-    return await db("todos")
-      .where({ id })
-      .first();
+      .del();
+    const message = "Todo has been deleted 💀";
+    return { message };
   },
 };
